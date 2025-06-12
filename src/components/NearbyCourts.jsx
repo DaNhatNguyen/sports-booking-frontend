@@ -85,7 +85,7 @@ const NearbyCourts = () => {
 
     return (
         <Container className="my-5">
-            <h4 className="fw-bold">Sân tập gần bạn</h4>
+            <h4 className="fw-bold">Sân gần bạn</h4>
             <p className="text-muted">Khu vực được đề xuất gần vị trí của bạn</p>
 
             {/* Bộ lọc */}
@@ -192,8 +192,9 @@ const NearbyCourts = () => {
                                 href={selectedCourt?.link || '#'}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                style={{color: "#ffff"}}
                             >
-                                Đặt sân
+                                Đặt lịch
                             </Button>
                         </div>
                     </Modal.Body>
