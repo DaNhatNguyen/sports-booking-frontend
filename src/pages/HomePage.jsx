@@ -9,12 +9,13 @@ const HomePage = () => {
   return (
     <>
       <Header />
+      <ImageSlider />
       <div style={{ position: 'relative' }}>
-        <ImageSlider />
         <SearchBar />
-        <div style={{ height: '150px' }} />
       </div>
-      <NearbyCourts />
+      <div className='mtopCourt' style={{marginTop: '150px'}}>
+        <NearbyCourts />
+      </div>
       <Footer />
     </>
   );
