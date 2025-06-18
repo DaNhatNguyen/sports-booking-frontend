@@ -1,56 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Container, Row, Col, Card, Modal, Tabs, Tab, Button, Badge
+  Container, Card, Modal, Tabs, Tab, Button, Badge
 } from 'react-bootstrap';
 import {
   FaMapMarkerAlt, FaStar
 } from 'react-icons/fa';
-
-// Kiểu dữ liệu cho mỗi sân
-interface Court {
-  id: number;
-  name: string;
-  sport: string;
-  location: string;
-  distance: string;
-  rating: number;
-  image: string;
-  link?: string;
-}
-
-// Dữ liệu mẫu (mockData)
-const mockData: Court[] = [
-  {
-    id: 1,
-    name: 'Sân bóng La Thành',
-    sport: 'Sân bóng đá',
-    location: 'Quận Thanh Xuân',
-    distance: '0.0 km',
-    rating: 0,
-    image: require('../assets/slide/slide1.png'),
-  },
-  {
-    id: 2,
-    name: 'Sân bóng đá Viettel 2',
-    sport: 'Sân bóng đá',
-    location: 'Quận Thanh Xuân',
-    distance: '0.0 km',
-    rating: 0,
-    image: require('../assets/slide/slide1.png'),
-  },
-  // ... các sân khác giống như vậy
-];
+import { getCourtsByLocation } from '../services/courtService';
+import { Court } from '../types/court';
+import { checkLoginAndRedirect } from '../utils/auth';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const NearbyCourts: React.FC = () => {
+  const [courts, setCourts] = useState<Court[]>([]);
   const [selectedCourt, setSelectedCourt] = useState<Court | null>(null);
   const [showDetail, setShowDetail] = useState<boolean>(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCourts = async () => {
+      try {
+        const location = JSON.parse(localStorage.getItem('selectedLocation') || '{}');
+        const { province, district } = location;
+        // console.log(province.name)
+
+        if (!province?.name || !district) {
+          console.warn('Thiếu thông tin địa phương.');
+          return;
+        }
+
+        const data = await getCourtsByLocation(province.name, district);
+        setCourts(data);
+      } catch (err) {
+        console.error('Lỗi khi gọi API sân:', err);
+      }
+    };
+
+    fetchCourts();
+
+    // Gọi lại mỗi khi khu vực thay đổi
+    const handleLocationChange = () => {
+      fetchCourts();
+    };
+
+    window.addEventListener('locationChanged', handleLocationChange);
+    return () => window.removeEventListener('locationChanged', handleLocationChange);
+  }, []);
 
   return (
     <Container className="my-5">
       <h4 className="fw-bold">Sân gần bạn</h4>
       <p className="text-muted">Khu vực được đề xuất gần vị trí của bạn</p>
 
-      {/* Bộ lọc */}
       <div className="d-flex gap-2 flex-wrap mb-4">
         <Badge pill bg="dark" text="light">Tất cả</Badge>
         <Badge pill bg="light" text="dark" className="border">Bóng đá</Badge>
@@ -59,46 +61,52 @@ const NearbyCourts: React.FC = () => {
         <Badge pill bg="light" text="dark" className="border">Bóng bàn</Badge>
       </div>
 
-      {/* Danh sách sân */}
       <div className="d-flex flex-wrap gap-4 justify-content-start">
-        {mockData.map((court) => (
-          <div
-            key={court.id}
-            className="shadow-sm bg-white rounded"
-            style={{
-              flex: '1 1 calc(25% - 1rem)',
-              minWidth: '260px',
-              maxWidth: '300px',
-              cursor: 'pointer'
-            }}
-            onClick={() => {
-              setSelectedCourt(court);
-              setShowDetail(true);
-            }}
-          >
-            <Card className="h-100 border-0">
-              <Card.Img
-                variant="top"
-                src={court.image}
-                style={{ height: '160px', objectFit: 'cover' }}
-              />
-              <Card.Body>
-                <div className="text-muted small mb-1">Mở cửa: 05:00 - 22:00</div>
-                <div className="text-primary small">{court.sport}</div>
-                <Card.Title className="mb-1">{court.name}</Card.Title>
-                <div className="text-muted small">
-                  <FaMapMarkerAlt className="text-danger me-1" />
-                  {court.location}
-                </div>
-                <div className="text-muted small mt-1">
-                  Cách {court.distance}{' '}
-                  <FaStar className="text-warning ms-2 me-1" />
-                  {court.rating}
-                </div>
-              </Card.Body>
-            </Card>
+        {courts.length === 0 ? (
+          <div className="text-muted fst-italic px-2">
+            Không có sân nào phù hợp với khu vực đã chọn hoăc chưa có dữ liệu.
           </div>
-        ))}
+        ) : (
+          courts.map((court) => (
+            <div
+              key={court._id}
+              className="shadow-sm bg-white rounded"
+              style={{
+                flex: '1 1 calc(25% - 1rem)',
+                minWidth: '260px',
+                maxWidth: '300px',
+                cursor: 'pointer'
+              }}
+              onClick={() => {
+                setSelectedCourt(court);
+                setShowDetail(true);
+              }}
+            >
+              <Card className="h-100 border-0">
+                <Card.Img
+                  variant="top"
+                  src={court.images?.[0] || '/default-image.png'}
+                  style={{ height: '160px', objectFit: 'cover' }}
+                />
+                <Card.Body>
+                  <div className="text-muted small mb-1">
+                    Mở cửa: {court.openTime} - {court.closeTime}
+                  </div>
+                  <div className="text-primary small">{court.type}</div>
+                  <Card.Title className="mb-1">{court.name}</Card.Title>
+                  <div className="text-muted small">
+                    <FaMapMarkerAlt className="text-danger me-1" />
+                    {court.address.split(',').slice(-2, -1)[0].trim()}
+                  </div>
+                  <div className="text-muted small mt-1">
+                    <FaStar className="text-warning ms-2 me-1" />
+                    {court.rating.toFixed(1)}
+                  </div>
+                </Card.Body>
+              </Card>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Modal chi tiết sân */}
@@ -116,44 +124,40 @@ const NearbyCourts: React.FC = () => {
             <Tab eventKey="info" title="Thông tin">
               <div className="tab-scroll">
                 <img
-                  src={selectedCourt?.image}
+                  src={selectedCourt?.images?.[0] || '/default-image.jpg'}
                   alt="court"
                   className="img-fluid rounded mb-3"
                 />
-                <p><strong>Loại sân:</strong> {selectedCourt?.sport}</p>
-                <p><strong>Địa chỉ:</strong> {selectedCourt?.location}</p>
-                <p><strong>Thời gian mở cửa:</strong> 05:00 - 22:00</p>
-                <p><strong>Khoảng cách:</strong> {selectedCourt?.distance}</p>
+                <p><strong>Loại sân:</strong> {selectedCourt?.type}</p>
+                <p><strong>Địa chỉ:</strong> {selectedCourt?.address}</p>
+                <p><strong>Thời gian mở cửa:</strong> {selectedCourt?.openTime} - {selectedCourt?.closeTime}</p>
                 <p><strong>Đánh giá:</strong> ⭐ {selectedCourt?.rating}</p>
               </div>
             </Tab>
-
             <Tab eventKey="services" title="Dịch vụ">
-              <div className="tab-scroll">
-                <p>Thông tin dịch vụ đi kèm của sân...</p>
-              </div>
+              <p>Thông tin dịch vụ đi kèm của sân...</p>
             </Tab>
-
             <Tab eventKey="images" title="Hình ảnh">
-              <div className="tab-scroll">
-                <p>Hình ảnh khác về sân...</p>
-              </div>
+              <p>Hình ảnh khác về sân...</p>
             </Tab>
-
             <Tab eventKey="reviews" title="Đánh giá">
-              <div className="tab-scroll">
-                <p>Hiển thị đánh giá từ người dùng...</p>
-              </div>
+              <p>Hiển thị đánh giá từ người dùng...</p>
             </Tab>
           </Tabs>
 
           <div className="text-end">
             <Button
               variant="warning"
-              href={selectedCourt?.link || '#'}
-              target="_blank"
-              rel="noopener noreferrer"
               style={{ color: "#ffff" }}
+              onClick={() =>
+                checkLoginAndRedirect(navigate, () => {
+                  if (selectedCourt?._id) {
+                    navigate(`/booking/${selectedCourt._id}`);
+                  } else {
+                    toast.error('Không tìm thấy sân để đặt lịch.');
+                  }
+                })
+              }
             >
               Đặt lịch
             </Button>

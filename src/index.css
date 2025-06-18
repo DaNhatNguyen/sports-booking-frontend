@@ -33,9 +33,31 @@
   }
 }
 
-@media (max-width: 424px) {
+@media (max-width: 767px) {
+  .wrap-btn-signup {
+    display: none !important;
+  }
+}
+
+/* responsive court */
+@media (min-width: 319px) {
   .mtopCourt {
-    margin-top: 300px;
+    margin-top: 380px;
+  }
+}
+@media (min-width: 424px) {
+  .mtopCourt {
+    margin-top: 330px;
+  }
+}
+@media (min-width: 767px) {
+  .mtopCourt {
+    margin-top: 200px;
+  }
+}
+@media (min-width: 1023px) {
+  .mtopCourt {
+    margin-top: 200px;
   }
 }
 

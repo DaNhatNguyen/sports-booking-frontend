@@ -1,6 +1,6 @@
 [
   {
-    "name": "Thành phố Hà Nội",
+    "name": "Hà Nội",
     "districts": [
       "Ba Đình",
       "Hoàn Kiếm",
@@ -35,7 +35,7 @@
     ]
   },
   {
-    "name": "Thành phố Hồ Chí Minh",
+    "name": "Hồ Chí Minh",
     "districts": [
       "Quận 1",
       "Quận 3",
@@ -62,7 +62,7 @@
     ]
   },
   {
-    "name": "Thành phố Đà Nẵng",
+    "name": "Đà Nẵng",
     "districts": [
       "Hải Châu",
       "Thanh Khê",
@@ -75,7 +75,7 @@
     ]
   },
   {
-    "name": "Tỉnh Bình Dương",
+    "name": "Bình Dương",
     "districts": [
       "Thủ Dầu Một",
       "Dĩ An",
@@ -89,7 +89,7 @@
     ]
   },
   {
-    "name": "Tỉnh Đồng Nai",
+    "name": "Đồng Nai",
     "districts": [
       "Biên Hòa",
       "Long Khánh",

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form } from 'react-bootstrap';
-import { FaMapMarkerAlt } from 'react-icons/fa';
-import { MdLocationCity } from 'react-icons/md';
+import { searchCourts } from '../services/courtService';
 import CustomButton from './CustomButton';
+import { Court } from '../types/court';
+import { useNavigate } from 'react-router-dom';
 
-// Kiểu dữ liệu cho tỉnh/thành
 interface LocationData {
   name: string;
   districts: string[];
@@ -13,25 +13,44 @@ interface LocationData {
 const SearchBar: React.FC = () => {
   const [locations, setLocations] = useState<LocationData[]>([]);
   const [selectedProvince, setSelectedProvince] = useState<string>('');
+  const [selectedDistrict, setSelectedDistrict] = useState<string>('');
+  const [selectedSport, setSelectedSport] = useState<string>('');
   const [districts, setDistricts] = useState<string[]>([]);
 
-  // Load dữ liệu tỉnh/thành từ file JSON
+  const navigate = useNavigate();
+
   useEffect(() => {
     fetch('/locations.json')
       .then((res) => res.json())
       .then((data: LocationData[]) => setLocations(data));
   }, []);
 
-  // Cập nhật danh sách quận/huyện khi chọn tỉnh/thành
   useEffect(() => {
-    const found = locations.find(loc => loc.name === selectedProvince);
+    const found = locations.find((loc) => loc.name === selectedProvince);
     setDistricts(found ? found.districts : []);
+    setSelectedDistrict(''); // Reset quận/huyện nếu đổi tỉnh
   }, [selectedProvince, locations]);
 
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!selectedSport || !selectedProvince || !selectedDistrict) {
+      alert('Vui lòng chọn đầy đủ thông tin để tìm kiếm!');
+      return;
+    }
+
+    try {
+      navigate(`/search-results?type=${selectedSport}&city=${selectedProvince}&district=${selectedDistrict}`);
+
+    } catch (err) {
+      console.error('Lỗi khi gọi API tìm kiếm:', err);
+    }
+  };
+
   return (
-    <div className="bg-white py-4 mtopCourt" style={{
+    <div className="bg-white py-4" style={{
       position: 'absolute',
-      top: '-50px',
+      top: '0',
       left: '50%',
       transform: 'translateX(-50%)',
       zIndex: 10,
@@ -42,14 +61,18 @@ const SearchBar: React.FC = () => {
         <h5 className="fw-bold mb-1">Đặt sân thể thao ngay</h5>
         <p className="text-muted mb-4">Tìm kiếm sân chơi thể thao, thi đấu khắp cả nước</p>
 
-        <Form>
+        <Form onSubmit={handleSearch}>
           <Row className="g-2 align-items-center">
             <Col md={3} sm={6}>
-              <Form.Select>
-                <option>Chọn môn thể thao</option>
-                <option>Bóng đá</option>
-                <option>Tennis</option>
-                <option>Cầu lông</option>
+              <Form.Select
+                value={selectedSport}
+                onChange={(e) => setSelectedSport(e.target.value)}
+              >
+                <option value="">Chọn môn thể thao</option>
+                <option value="Bóng đá">Bóng đá</option>
+                <option value="Tennis">Tennis</option>
+                <option value="Cầu lông">Cầu lông</option>
+                <option value="Bóng bàn">Bóng bàn</option>
               </Form.Select>
             </Col>
 
@@ -58,7 +81,7 @@ const SearchBar: React.FC = () => {
                 value={selectedProvince}
                 onChange={(e) => setSelectedProvince(e.target.value)}
               >
-                <option><MdLocationCity /> Chọn tỉnh/thành phố</option>
+                <option value="">Chọn tỉnh/thành phố</option>
                 {locations.map((loc, idx) => (
                   <option key={idx} value={loc.name}>
                     {loc.name}
@@ -68,10 +91,14 @@ const SearchBar: React.FC = () => {
             </Col>
 
             <Col md={3} sm={6}>
-              <Form.Select disabled={!districts.length}>
-                <option><FaMapMarkerAlt /> Chọn quận/huyện</option>
+              <Form.Select
+                value={selectedDistrict}
+                onChange={(e) => setSelectedDistrict(e.target.value)}
+                disabled={!districts.length}
+              >
+                <option value="">Chọn quận/huyện</option>
                 {districts.map((d, idx) => (
-                  <option key={idx}>{d}</option>
+                  <option key={idx} value={d}>{d}</option>
                 ))}
               </Form.Select>
             </Col>

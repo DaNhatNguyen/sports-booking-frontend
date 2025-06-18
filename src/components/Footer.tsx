@@ -14,14 +14,14 @@ const Footer: React.FC = () => {
           <Row className="align-items-center">
             <Col md={6}>
               <h5 className="fw-bold mb-1">Đặt sân nhanh chóng, tiết kiệm</h5>
-              <p className="mb-0 text-muted">Hãy đăng ký và chúng tôi sẽ gửi những ưu đãi tốt nhất cho bạn</p>
+              <p className="mb-0 fw">Hãy đăng ký và chúng tôi sẽ gửi những ưu đãi tốt nhất cho bạn</p>
             </Col>
             <Col md={4} className="mt-3 mt-md-0">
               <Form.Control type="email" placeholder="Địa chỉ e-mail của bạn" />
             </Col>
             <Col md={2} className="mt-3 mt-md-0">
               <CustomButton variant="danger" className="w-100">
-                Đăng kí
+                Đăng ký
               </CustomButton>
             </Col>
           </Row>
@@ -65,7 +65,7 @@ const Footer: React.FC = () => {
       <div className="text-center py-3" style={{ borderTop: '1px solid rgba(255,255,255,0.1)' }}>
         <span className="text-light">
           Copyright © 2023 – <span className="text-danger">Hi5port</span>. All rights reserved.
-          Designed by <span className="text-danger">Aegona</span>
+          Designed by <span className="text-danger">DaNhatNguyen</span>
         </span>
       </div>
     </footer>

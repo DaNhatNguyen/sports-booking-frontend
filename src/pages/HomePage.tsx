@@ -4,6 +4,7 @@ import ImageSlider from '../components/ImageSlider';
 import SearchBar from '../components/SearchBar';
 import NearbyCourts from '../components/NearbyCourts';
 import Footer from '../components/Footer';
+import '../index.css';
 
 const HomePage: React.FC = () => {
   return (
@@ -13,7 +14,7 @@ const HomePage: React.FC = () => {
       <div style={{ position: 'relative' }}>
         <SearchBar />
       </div>
-      <div className='mtopCourt' style={{ marginTop: '150px' }}>
+      <div className='mtopCourt'>
         <NearbyCourts />
       </div>
       <Footer />

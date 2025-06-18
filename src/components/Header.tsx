@@ -29,12 +29,14 @@ const Header: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [step, setStep] = useState<number>(1);
 
+  // Lấy dữ liệu khu vực trong file
   useEffect(() => {
     fetch('/locations.json')
       .then((res) => res.json())
       .then((data) => setLocationData(data));
   }, []);
 
+  // Lây dữ liệu khu vực đã lưu trước đó
   useEffect(() => {
     const saved = localStorage.getItem('selectedLocation');
     if (saved) {
@@ -44,6 +46,7 @@ const Header: React.FC = () => {
     }
   }, []);
 
+  // Kiểm tra login
   useEffect(() => {
     const checkLogin = async () => {
       const stored = getStoredUser();
@@ -132,7 +135,7 @@ const Header: React.FC = () => {
                         </a>
                         <hr className="my-2" />
                         <a
-                          href="#"
+                          href="/"
                           onClick={() => {
                             clearUser();
                             setUser(null);
@@ -149,7 +152,7 @@ const Header: React.FC = () => {
             ) : (
               <div className="d-flex gap-2">
                 <a href="/login" className="btn btn-outline-primary btn-sm">Đăng nhập</a>
-                <a href="/signup" className="btn btn-primary btn-sm">Đăng ký</a>
+                <a href="/signup" className="btn btn-primary btn-sm wrap-btn-signup">Đăng ký</a>
               </div>
             )}
           </div>
@@ -203,6 +206,8 @@ const Header: React.FC = () => {
                         district
                       })
                     );
+                    // Phát ra sự kiện cho các component khác biết
+                    window.dispatchEvent(new Event('locationChanged'));
                   }}
                 >
                   {district}
