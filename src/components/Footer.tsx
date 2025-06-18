@@ -1,10 +1,11 @@
 import React from 'react';
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Form } from 'react-bootstrap';
 import { FaPhone, FaEnvelope } from 'react-icons/fa';
-import logo from '../assets/logo.png'; // Đường dẫn đến logo
-import boCongThuong from '../assets/bocongthuong.png'; // Đường dẫn đến icon đăng ký
+import logo from '../assets/logo.png';
+import boCongThuong from '../assets/bocongthuong.png';
+import CustomButton from './CustomButton';
 
-const Footer = () => {
+const Footer: React.FC = () => {
   return (
     <footer style={{ backgroundColor: '#003366', color: '#fff', fontSize: '0.9rem' }}>
       {/* Đăng ký */}
@@ -19,7 +20,9 @@ const Footer = () => {
               <Form.Control type="email" placeholder="Địa chỉ e-mail của bạn" />
             </Col>
             <Col md={2} className="mt-3 mt-md-0">
-              <Button variant="danger" className="w-100">Đăng kí</Button>
+              <CustomButton variant="danger" className="w-100">
+                Đăng kí
+              </CustomButton>
             </Col>
           </Row>
         </Container>

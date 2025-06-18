@@ -1,41 +1,40 @@
-import React from 'react';
-import { useState, useEffect, useRef } from 'react';
-import { Overlay, Popover } from 'react-bootstrap';
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import React, { useState, useEffect, useRef } from 'react';
+import { Overlay, Popover, Navbar, Nav, Container, Modal } from 'react-bootstrap';
 import { FaFutbol, FaTableTennis, FaMapMarkerAlt } from 'react-icons/fa';
-import {
-  getStoredUser,
-  fetchCurrentUser,
-  clearUser,
-} from '../services/authService';
 import { GiTennisRacket } from 'react-icons/gi';
 import { MdSportsTennis } from 'react-icons/md';
+import { getStoredUser, fetchCurrentUser, clearUser } from '../services/authService';
 import logo from '../assets/logo.png';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Modal, Button } from 'react-bootstrap';
 
-const Header = () => {
+interface Province {
+  name: string;
+  districts: string[];
+}
 
-  const [showOverlay, setShowOverlay] = useState(false);
-  const target = useRef(null);
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+interface User {
+  fullName: string;
+  token: string;
+  [key: string]: any; // phòng trường hợp có thêm dữ liệu
+}
 
-  // Khu vực
-  const [locationData, setLocationData] = useState([]);
-  const [selectedProvince, setSelectedProvince] = useState(null);
-  const [selectedDistrict, setSelectedDistrict] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [step, setStep] = useState(1);
+const Header: React.FC = () => {
+  const [showOverlay, setShowOverlay] = useState<boolean>(false);
+  const target = useRef<HTMLSpanElement | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // Lấy dữ liệu từ file .json
+  const [locationData, setLocationData] = useState<Province[]>([]);
+  const [selectedProvince, setSelectedProvince] = useState<Province | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [step, setStep] = useState<number>(1);
+
   useEffect(() => {
     fetch('/locations.json')
       .then((res) => res.json())
       .then((data) => setLocationData(data));
   }, []);
 
-  // Hiển thị khu vực đã chọn trước đó khi load lại trang
   useEffect(() => {
     const saved = localStorage.getItem('selectedLocation');
     if (saved) {
@@ -48,7 +47,6 @@ const Header = () => {
   useEffect(() => {
     const checkLogin = async () => {
       const stored = getStoredUser();
-      // console.log(stored)
       if (!stored || !stored.token) {
         setLoading(false);
         return;
@@ -56,7 +54,6 @@ const Header = () => {
 
       try {
         const userData = await fetchCurrentUser(stored.token);
-        // console.log('userData', userData)
         setUser({ ...userData, token: stored.token });
       } catch (err) {
         console.warn('Token hết hạn hoặc không hợp lệ.');
@@ -70,16 +67,11 @@ const Header = () => {
     checkLogin();
   }, []);
 
-
   return (
     <Navbar bg="white" expand="lg" className="border-bottom py-2">
       <Container className="px-3 px-lg-5">
         <Navbar.Brand href="/">
-          <img
-            src={logo}
-            alt="Hi5Sport"
-            height="40"
-          />
+          <img src={logo} alt="Hi5Sport" height="40" />
         </Navbar.Brand>
 
         <Nav className="me-auto align-items-center d-none d-lg-flex">
@@ -102,7 +94,6 @@ const Header = () => {
                       ? `${selectedDistrict}, ${selectedProvince.name.replace(/^Tỉnh |^Thành phố /, '')}`
                       : "Chọn khu vực"}
                   </div>
-
                 </div>
               </div>
             </div>
@@ -158,21 +149,21 @@ const Header = () => {
             ) : (
               <div className="d-flex gap-2">
                 <a href="/login" className="btn btn-outline-primary btn-sm">Đăng nhập</a>
-                <a href="/signup" className="btn btn-primary btn-sm d-none d-sm-inline-block">Đăng ký</a>
+                <a href="/signup" className="btn btn-primary btn-sm">Đăng ký</a>
               </div>
             )}
           </div>
         </Nav>
       </Container>
 
-      {/* Model location */}
+      {/* Modal chọn khu vực */}
       <Modal show={showModal} onHide={() => {
         setShowModal(false);
         setStep(1);
       }} size="lg" centered>
         <Modal.Header className="bg-primary text-white" closeButton>
           <Modal.Title>
-            {step === 1 ? "Vui lòng chọn khu vực" : `Chọn quận/huyện tại ${selectedProvince.name}`}
+            {step === 1 ? "Vui lòng chọn khu vực" : `Chọn quận/huyện tại ${selectedProvince?.name}`}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ maxHeight: "400px", overflowY: "auto" }}>
@@ -194,7 +185,7 @@ const Header = () => {
             </div>
           )}
 
-          {step === 2 && (
+          {step === 2 && selectedProvince && (
             <div className="row">
               {selectedProvince.districts.map((district, idx) => (
                 <div
@@ -205,8 +196,6 @@ const Header = () => {
                     setSelectedDistrict(district);
                     setShowModal(false);
                     setStep(1);
-
-                    // Lưu localStorage
                     localStorage.setItem(
                       "selectedLocation",
                       JSON.stringify({
@@ -230,9 +219,7 @@ const Header = () => {
           </Modal.Footer>
         )}
       </Modal>
-
     </Navbar>
-
   );
 };
 

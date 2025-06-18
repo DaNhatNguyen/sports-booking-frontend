@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-import { FaFutbol, FaMapMarkerAlt } from 'react-icons/fa';
+import { Container, Row, Col, Form } from 'react-bootstrap';
+import { FaMapMarkerAlt } from 'react-icons/fa';
 import { MdLocationCity } from 'react-icons/md';
+import CustomButton from './CustomButton';
 
-const SearchBar = () => {
-  const [locations, setLocations] = useState([]);
-  const [selectedProvince, setSelectedProvince] = useState('');
-  const [districts, setDistricts] = useState([]);
+// Kiểu dữ liệu cho tỉnh/thành
+interface LocationData {
+  name: string;
+  districts: string[];
+}
+
+const SearchBar: React.FC = () => {
+  const [locations, setLocations] = useState<LocationData[]>([]);
+  const [selectedProvince, setSelectedProvince] = useState<string>('');
+  const [districts, setDistricts] = useState<string[]>([]);
 
   // Load dữ liệu tỉnh/thành từ file JSON
   useEffect(() => {
     fetch('/locations.json')
       .then((res) => res.json())
-      .then((data) => setLocations(data));
+      .then((data: LocationData[]) => setLocations(data));
   }, []);
 
   // Cập nhật danh sách quận/huyện khi chọn tỉnh/thành
@@ -70,9 +77,9 @@ const SearchBar = () => {
             </Col>
 
             <Col md={3} sm={6}>
-              <Button variant="danger" type="submit" className="w-100">
+              <CustomButton type="submit" variant="danger" className="w-100">
                 Tìm kiếm ngay
-              </Button>
+              </CustomButton>
             </Col>
           </Row>
         </Form>

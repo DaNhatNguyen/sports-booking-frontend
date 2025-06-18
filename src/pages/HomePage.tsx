@@ -5,7 +5,7 @@ import SearchBar from '../components/SearchBar';
 import NearbyCourts from '../components/NearbyCourts';
 import Footer from '../components/Footer';
 
-const HomePage = () => {
+const HomePage: React.FC = () => {
   return (
     <>
       <Header />
@@ -13,7 +13,7 @@ const HomePage = () => {
       <div style={{ position: 'relative' }}>
         <SearchBar />
       </div>
-      <div className='mtopCourt' style={{marginTop: '150px'}}>
+      <div className='mtopCourt' style={{ marginTop: '150px' }}>
         <NearbyCourts />
       </div>
       <Footer />

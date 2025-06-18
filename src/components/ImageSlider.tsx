@@ -3,7 +3,7 @@ import { Carousel } from 'react-bootstrap';
 import slide1 from '../assets/slide/slide1.png';
 import slide2 from '../assets/slide/slide2.png';
 
-const ImageSlider = () => {
+const ImageSlider: React.FC = () => {
   return (
     <div className="w-100">
       <Carousel>
@@ -16,7 +16,7 @@ const ImageSlider = () => {
               width: '100%',
               height: 'auto',
               aspectRatio: '3 / 1',
-              objectFit: 'cover'
+              objectFit: 'cover',
             }}
           />
         </Carousel.Item>
@@ -30,7 +30,7 @@ const ImageSlider = () => {
               width: '100%',
               height: 'auto',
               aspectRatio: '3 / 1',
-              objectFit: 'cover'
+              objectFit: 'cover',
             }}
           />
         </Carousel.Item>

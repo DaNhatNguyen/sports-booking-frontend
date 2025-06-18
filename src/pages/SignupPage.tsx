@@ -5,31 +5,47 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import signupBg from '../assets/login-bg.png';
 
-const SignupPage = () => {
+interface FormData {
+  email: string;
+  phoneNumber: string;
+  fullName: string;
+  password: string;
+  confirmPassword: string;
+}
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+const SignupPage: React.FC = () => {
+  const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    contact: '',
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirm, setShowConfirm] = useState<boolean>(false);
+
+  const [formData, setFormData] = useState<FormData>({
+    email: '',
+    phoneNumber: '',
     fullName: '',
     password: '',
     confirmPassword: ''
   });
 
-  const handleChange = (e) => {
+  const emailRef = useRef<HTMLInputElement | null>(null);
+  const phoneRef = useRef<HTMLInputElement | null>(null);
+  const nameRef = useRef<HTMLInputElement | null>(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
+  const confirmRef = useRef<HTMLInputElement | null>(null);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value
     }));
   };
 
-  const handleRegister = async (e) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const { email, phoneNumber, fullName, password, confirmPassword } = formData;
 
-    // 1. Kiểm tra rỗng
     if (!email) {
       alert('Vui lòng nhập email.');
       emailRef.current?.focus();
@@ -60,21 +76,18 @@ const SignupPage = () => {
       return;
     }
 
-    // 2. Kiểm tra độ dài mật khẩu
     if (password.length < 6) {
       alert('Mật khẩu phải có ít nhất 6 ký tự.');
       passwordRef.current?.focus();
       return;
     }
 
-    // 3. Kiểm tra mật khẩu khớp
     if (password !== confirmPassword) {
       alert('Mật khẩu và xác nhận không khớp.');
       confirmRef.current?.focus();
       return;
     }
 
-    // 4. Kiểm tra định dạng
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^(0|\+84)[0-9]{9,10}$/;
 
@@ -90,25 +103,14 @@ const SignupPage = () => {
       return;
     }
 
-    // Gửi API
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', formData);
+      await axios.post('http://localhost:5000/api/auth/register', formData);
       alert('Đăng ký thành công');
       navigate('/login');
-    } catch (err) {
+    } catch (err: any) {
       alert(err.response?.data?.message || 'Đăng ký thất bại');
     }
   };
-
-
-
-  const navigate = useNavigate();
-
-  const emailRef = useRef(null);
-  const phoneRef = useRef(null);
-  const nameRef = useRef(null);
-  const passwordRef = useRef(null);
-  const confirmRef = useRef(null);
 
   return (
     <div
@@ -158,7 +160,7 @@ const SignupPage = () => {
                 placeholder="Email"
                 ref={emailRef}
               />
-              <Button variant="outline-secondary">✕</Button>
+              <Button variant="outline-secondary" onClick={() => setFormData({ ...formData, email: '' })}>✕</Button>
             </InputGroup>
           </Form.Group>
 
@@ -173,7 +175,7 @@ const SignupPage = () => {
                 placeholder="Nhập số điện thoại"
                 ref={phoneRef}
               />
-              <Button variant="outline-secondary">✕</Button>
+              <Button variant="outline-secondary" onClick={() => setFormData({ ...formData, phoneNumber: '' })}>✕</Button>
             </InputGroup>
           </Form.Group>
 
@@ -188,7 +190,7 @@ const SignupPage = () => {
                 placeholder="Nhập họ và tên"
                 ref={nameRef}
               />
-              <Button variant="outline-secondary">✕</Button>
+              <Button variant="outline-secondary" onClick={() => setFormData({ ...formData, fullName: '' })}>✕</Button>
             </InputGroup>
           </Form.Group>
 
@@ -223,7 +225,6 @@ const SignupPage = () => {
                 placeholder="Nhập lại mật khẩu"
                 ref={confirmRef}
               />
-
               <Button
                 variant="outline-secondary"
                 onClick={() => setShowConfirm(!showConfirm)}
