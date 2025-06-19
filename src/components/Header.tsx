@@ -78,10 +78,10 @@ const Header: React.FC = () => {
         </Navbar.Brand>
 
         <Nav className="me-auto align-items-center d-none d-lg-flex">
-          <Nav.Link href="/football"><FaFutbol /> Bóng đá</Nav.Link>
-          <Nav.Link href="/tennis"><MdSportsTennis /> Tennis</Nav.Link>
-          <Nav.Link href="/badminton"><GiTennisRacket /> Cầu lông</Nav.Link>
-          <Nav.Link href="/pingpong"><FaTableTennis /> Bóng bàn</Nav.Link>
+          <Nav.Link href="/#"><FaFutbol /> Bóng đá</Nav.Link>
+          <Nav.Link href="/#"><MdSportsTennis /> Tennis</Nav.Link>
+          <Nav.Link href="/#"><GiTennisRacket /> Cầu lông</Nav.Link>
+          <Nav.Link href="/#"><FaTableTennis /> Bóng bàn</Nav.Link>
         </Nav>
 
         <Nav className="align-items-center">
@@ -130,7 +130,7 @@ const Header: React.FC = () => {
                   <Popover id="popover-user-menu">
                     <Popover.Body>
                       <div className="d-flex flex-column">
-                        <a href="/profile" className="mb-2 text-decoration-none text-dark">
+                        <a href="/#" className="mb-2 text-decoration-none text-dark">
                           Danh sách lịch đã đặt
                         </a>
                         <hr className="my-2" />
