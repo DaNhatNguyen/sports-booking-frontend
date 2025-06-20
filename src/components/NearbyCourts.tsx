@@ -55,10 +55,6 @@ const NearbyCourts: React.FC = () => {
 
       <div className="d-flex gap-2 flex-wrap mb-4">
         <Badge pill bg="dark" text="light">Tất cả</Badge>
-        <Badge pill bg="light" text="dark" className="border">Bóng đá</Badge>
-        <Badge pill bg="light" text="dark" className="border">Tennis</Badge>
-        <Badge pill bg="light" text="dark" className="border">Cầu lông</Badge>
-        <Badge pill bg="light" text="dark" className="border">Bóng bàn</Badge>
       </div>
 
       <div className="d-flex flex-wrap gap-4 justify-content-start">

@@ -5,6 +5,7 @@ import { GiTennisRacket } from 'react-icons/gi';
 import { MdSportsTennis } from 'react-icons/md';
 import { getStoredUser, fetchCurrentUser, clearUser } from '../services/authService';
 import logo from '../assets/logo.png';
+import { Link } from 'react-router-dom';
 
 interface Province {
   name: string;
@@ -78,11 +79,12 @@ const Header: React.FC = () => {
         </Navbar.Brand>
 
         <Nav className="me-auto align-items-center d-none d-lg-flex">
-          <Nav.Link href="/#"><FaFutbol /> Bóng đá</Nav.Link>
-          <Nav.Link href="/#"><MdSportsTennis /> Tennis</Nav.Link>
-          <Nav.Link href="/#"><GiTennisRacket /> Cầu lông</Nav.Link>
-          <Nav.Link href="/#"><FaTableTennis /> Bóng bàn</Nav.Link>
+          <Nav.Link as={Link} to="/loai-san/bong-da"><FaFutbol /> Bóng đá</Nav.Link>
+          <Nav.Link as={Link} to="/loai-san/tennis"><MdSportsTennis /> Tennis</Nav.Link>
+          <Nav.Link as={Link} to="/loai-san/cau-long"><GiTennisRacket /> Cầu lông</Nav.Link>
+          <Nav.Link as={Link} to="/loai-san/bong-ban"><FaTableTennis /> Bóng bàn</Nav.Link>
         </Nav>
+
 
         <Nav className="align-items-center">
           <div className="d-flex align-items-center justify-content-between flex-grow-1 flex-wrap">
