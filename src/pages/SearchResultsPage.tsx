@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { searchCourts } from '../services/courtService';
-import { Court } from '../types/court';
+import { searchCourtGroups } from '../services/courtService';
+import { CourtGroup } from '../types/courtGroup';
 import { Container, Card, Modal, Tabs, Tab, Button } from 'react-bootstrap';
 import { FaMapMarkerAlt, FaStar } from 'react-icons/fa';
 import Header from '../components/Header';
@@ -15,14 +15,16 @@ const useQuery = () => new URLSearchParams(useLocation().search);
 
 const SearchResults: React.FC = () => {
   const query = useQuery();
-  const [courts, setCourts] = useState<Court[]>([]);
+  const [courts, setCourts] = useState<CourtGroup[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedCourt, setSelectedCourt] = useState<Court | null>(null);
+  const [selectedCourt, setSelectedCourt] = useState<CourtGroup | null>(null);
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const type = query.get('type') || '';
   const city = query.get('city') || '';
   const district = query.get('district') || '';
+
+  console.log(type, city, district);
 
   const navigate = useNavigate();
 
@@ -30,7 +32,7 @@ const SearchResults: React.FC = () => {
     const fetchResults = async () => {
       setLoading(true);
       try {
-        const data = await searchCourts(type, city, district);
+        const data = await searchCourtGroups(type, city, district);
         setCourts(data);
       } catch (error) {
         console.error('Lỗi khi tìm kiếm sân:', error);
@@ -50,7 +52,6 @@ const SearchResults: React.FC = () => {
         <SearchBar />
       </div>
       <div className='mtopCourt'>
-
         <Container className="my-5">
           <h4 className="fw-bold mb-3">Kết quả tìm kiếm</h4>
 
@@ -92,7 +93,7 @@ const SearchResults: React.FC = () => {
                         <Card.Title className="mb-1">{court.name}</Card.Title>
                         <div className="text-muted small">
                           <FaMapMarkerAlt className="text-danger me-1" />
-                          {court.address.split(',').slice(-2, -1)[0].trim()}
+                          {court.address}, {court.district}, {court.province}
                         </div>
                         <div className="text-muted small mt-1">
                           <FaStar className="text-warning ms-2 me-1" />
@@ -106,7 +107,6 @@ const SearchResults: React.FC = () => {
             </div>
           )}
 
-          {/* Modal chi tiết sân */}
           <Modal
             show={showDetail}
             onHide={() => setShowDetail(false)}
@@ -126,8 +126,9 @@ const SearchResults: React.FC = () => {
                       className="img-fluid rounded mb-3"
                     />
                     <p><strong>Loại sân:</strong> {selectedCourt?.type}</p>
-                    <p><strong>Địa chỉ:</strong> {selectedCourt?.address}</p>
+                    <p><strong>Địa chỉ:</strong> {selectedCourt?.address}, {selectedCourt?.district}, {selectedCourt?.province}</p>
                     <p><strong>Thời gian mở cửa:</strong> {selectedCourt?.openTime} - {selectedCourt?.closeTime}</p>
+                    <p><strong>Điện thoại:</strong> {selectedCourt?.phoneNumber || 'Chưa có'}</p>
                     <p><strong>Đánh giá:</strong> ⭐ {selectedCourt?.rating}</p>
                   </div>
                 </Tab>
@@ -135,7 +136,16 @@ const SearchResults: React.FC = () => {
                   <p>Thông tin dịch vụ đi kèm của sân...</p>
                 </Tab>
                 <Tab eventKey="images" title="Hình ảnh">
-                  <p>Hình ảnh khác về sân...</p>
+                  <div className="d-flex flex-wrap gap-2 mt-2">
+                    {selectedCourt?.images?.map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={img}
+                        alt={`court-img-${idx}`}
+                        style={{ width: '150px', height: '100px', objectFit: 'cover', borderRadius: '8px' }}
+                      />
+                    ))}
+                  </div>
                 </Tab>
                 <Tab eventKey="reviews" title="Đánh giá">
                   <p>Hiển thị đánh giá từ người dùng...</p>

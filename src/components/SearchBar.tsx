@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form } from 'react-bootstrap';
-import { searchCourts } from '../services/courtService';
-import CustomButton from './CustomButton';
-import { Court } from '../types/court';
 import { useNavigate } from 'react-router-dom';
+import CustomButton from './CustomButton';
 
 interface LocationData {
   name: string;
@@ -28,7 +26,7 @@ const SearchBar: React.FC = () => {
   useEffect(() => {
     const found = locations.find((loc) => loc.name === selectedProvince);
     setDistricts(found ? found.districts : []);
-    setSelectedDistrict(''); // Reset quận/huyện nếu đổi tỉnh
+    setSelectedDistrict('');
   }, [selectedProvince, locations]);
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -41,9 +39,8 @@ const SearchBar: React.FC = () => {
 
     try {
       navigate(`/search-results?type=${selectedSport}&city=${selectedProvince}&district=${selectedDistrict}`);
-
     } catch (err) {
-      console.error('Lỗi khi gọi API tìm kiếm:', err);
+      console.error('Lỗi khi chuyển hướng tìm kiếm:', err);
     }
   };
 
@@ -68,11 +65,11 @@ const SearchBar: React.FC = () => {
                 value={selectedSport}
                 onChange={(e) => setSelectedSport(e.target.value)}
               >
-                <option value="">Chọn môn thể thao</option>
-                <option value="Bóng đá">Bóng đá</option>
-                <option value="Tennis">Tennis</option>
-                <option value="Cầu lông">Cầu lông</option>
-                <option value="Bóng bàn">Bóng bàn</option>
+                <option value="">Chọn sân thể thao</option>
+                <option value="Sân cầu lông">Sân Cầu lông</option>
+                <option value="Sân bóng đá">Sân bóng đá</option>
+                <option value="Sân tennis">Sân tennis</option>
+                <option value="Sân bóng bàn">Sân bóng bàn</option>
               </Form.Select>
             </Col>
 

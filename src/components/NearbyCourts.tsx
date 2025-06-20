@@ -5,43 +5,41 @@ import {
 import {
   FaMapMarkerAlt, FaStar
 } from 'react-icons/fa';
-import { getCourtsByLocation } from '../services/courtService';
-import { Court } from '../types/court';
+import { getCourtGroupsByLocation } from '../services/courtService';
+import { CourtGroup } from '../types/courtGroup';
 import { checkLoginAndRedirect } from '../utils/auth';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const NearbyCourts: React.FC = () => {
-  const [courts, setCourts] = useState<Court[]>([]);
-  const [selectedCourt, setSelectedCourt] = useState<Court | null>(null);
+  const [courtGroups, setCourtGroups] = useState<CourtGroup[]>([]);
+  const [selectedCourt, setSelectedCourt] = useState<CourtGroup | null>(null);
   const [showDetail, setShowDetail] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCourts = async () => {
+    const fetchCourtGroups = async () => {
       try {
         const location = JSON.parse(localStorage.getItem('selectedLocation') || '{}');
         const { province, district } = location;
-        // console.log(province.name)
 
         if (!province?.name || !district) {
           console.warn('Thiếu thông tin địa phương.');
           return;
         }
 
-        const data = await getCourtsByLocation(province.name, district);
-        setCourts(data);
+        const data = await getCourtGroupsByLocation(province.name, district);
+        setCourtGroups(data);
       } catch (err) {
-        console.error('Lỗi khi gọi API sân:', err);
+        console.error('Lỗi khi gọi API court group:', err);
       }
     };
 
-    fetchCourts();
+    fetchCourtGroups();
 
-    // Gọi lại mỗi khi khu vực thay đổi
     const handleLocationChange = () => {
-      fetchCourts();
+      fetchCourtGroups();
     };
 
     window.addEventListener('locationChanged', handleLocationChange);
@@ -58,12 +56,12 @@ const NearbyCourts: React.FC = () => {
       </div>
 
       <div className="d-flex flex-wrap gap-4 justify-content-start">
-        {courts.length === 0 ? (
+        {courtGroups.length === 0 ? (
           <div className="text-muted fst-italic px-2">
             Không có sân nào phù hợp với khu vực đã chọn hoăc chưa có dữ liệu.
           </div>
         ) : (
-          courts.map((court) => (
+          courtGroups.map((court) => (
             <div
               key={court._id}
               className="shadow-sm bg-white rounded"
@@ -92,7 +90,7 @@ const NearbyCourts: React.FC = () => {
                   <Card.Title className="mb-1">{court.name}</Card.Title>
                   <div className="text-muted small">
                     <FaMapMarkerAlt className="text-danger me-1" />
-                    {court.address.split(',').slice(-2, -1)[0].trim()}
+                    {court.address}, {court.district}, {court.province}
                   </div>
                   <div className="text-muted small mt-1">
                     <FaStar className="text-warning ms-2 me-1" />
@@ -125,8 +123,9 @@ const NearbyCourts: React.FC = () => {
                   className="img-fluid rounded mb-3"
                 />
                 <p><strong>Loại sân:</strong> {selectedCourt?.type}</p>
-                <p><strong>Địa chỉ:</strong> {selectedCourt?.address}</p>
+                <p><strong>Địa chỉ:</strong> {selectedCourt?.address}, {selectedCourt?.district}, {selectedCourt?.province}</p>
                 <p><strong>Thời gian mở cửa:</strong> {selectedCourt?.openTime} - {selectedCourt?.closeTime}</p>
+                <p><strong>Điện thoại:</strong> {selectedCourt?.phoneNumber || 'Chưa có'}</p>
                 <p><strong>Đánh giá:</strong> ⭐ {selectedCourt?.rating}</p>
               </div>
             </Tab>
@@ -134,7 +133,16 @@ const NearbyCourts: React.FC = () => {
               <p>Thông tin dịch vụ đi kèm của sân...</p>
             </Tab>
             <Tab eventKey="images" title="Hình ảnh">
-              <p>Hình ảnh khác về sân...</p>
+              <div className="d-flex flex-wrap gap-2 mt-2">
+                {selectedCourt?.images?.map((img, idx) => (
+                  <img
+                    key={idx}
+                    src={img}
+                    alt={`court-img-${idx}`}
+                    style={{ width: '150px', height: '100px', objectFit: 'cover', borderRadius: '8px' }}
+                  />
+                ))}
+              </div>
             </Tab>
             <Tab eventKey="reviews" title="Đánh giá">
               <p>Hiển thị đánh giá từ người dùng...</p>
