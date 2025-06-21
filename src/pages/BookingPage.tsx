@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Container, Row, Col, Form, Button, Modal } from 'react-bootstrap';
 import { FaMapMarkerAlt, FaCalendarAlt } from 'react-icons/fa';
-import axios from 'axios';
 import { getAvailableTimeSlots, getCourtGroupById, getCourtsByGroupId } from '../services/courtService';
+import { createBooking } from '../services/bookingService';
 import { Court } from '../types/Court';
 import { TimeSlot } from '../types/TimeSlot';
 import Header from '../components/Header';
-
 
 const BookingPage: React.FC = () => {
   const { groupId } = useParams<{ groupId: string }>();
@@ -17,14 +16,12 @@ const BookingPage: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [showDatePicker, setShowDatePicker] = useState(false);
-
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const navigate = useNavigate();
 
-  // Lấy user từ localStorage
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-  // Lấy sân lớn theo groupId
   useEffect(() => {
     const fetchCourtGroup = async () => {
       if (groupId) {
@@ -36,11 +33,9 @@ const BookingPage: React.FC = () => {
         }
       }
     };
-
     fetchCourtGroup();
   }, [groupId]);
 
-  // Lấy danh sách sân nhỏ của sân lớn
   useEffect(() => {
     const fetchCourts = async () => {
       if (groupId) {
@@ -52,11 +47,9 @@ const BookingPage: React.FC = () => {
         }
       }
     };
-
     fetchCourts();
   }, [groupId]);
 
-  // Lấy giờ trống
   useEffect(() => {
     const fetchTimeSlots = async () => {
       if (selectedCourtId && selectedDate) {
@@ -68,9 +61,40 @@ const BookingPage: React.FC = () => {
         }
       }
     };
-
     fetchTimeSlots();
   }, [selectedCourtId, selectedDate]);
+
+  const handleConfirmBooking = async () => {
+    if (!selectedSlot || !selectedCourtId || !user?._id) {
+      alert('Thiếu thông tin cần thiết!');
+      return;
+    }
+
+    const payload = {
+      courtId: selectedCourtId,
+      date: selectedDate,
+      userId: user._id,
+      timeSlot: {
+        startTime: selectedSlot.startTime,
+        endTime: selectedSlot.endTime,
+      },
+    };
+
+    try {
+      await createBooking(payload);
+      alert('Đặt sân thành công!');
+      setShowConfirmModal(false);
+      navigate('/');
+    } catch (error: any) {
+      console.error('Lỗi khi đặt sân:', error);
+      if (error.response?.status === 409) {
+        alert('Khung giờ đã có người đặt trước!');
+      } else {
+        alert('Đặt sân thất bại! Vui lòng thử lại.');
+      }
+    }
+  };
+
 
   return (
     <>
@@ -103,12 +127,8 @@ const BookingPage: React.FC = () => {
             />
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowDatePicker(false)}>
-              Hủy
-            </Button>
-            <Button variant="success" onClick={() => setShowDatePicker(false)}>
-              Xác nhận
-            </Button>
+            <Button variant="secondary" onClick={() => setShowDatePicker(false)}>Hủy</Button>
+            <Button variant="success" onClick={() => setShowDatePicker(false)}>Xác nhận</Button>
           </Modal.Footer>
         </Modal>
 
@@ -186,7 +206,7 @@ const BookingPage: React.FC = () => {
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>Hủy</Button>
-            <Button variant="primary">Xác nhận đặt sân</Button>
+            <Button variant="primary" onClick={handleConfirmBooking}>Xác nhận đặt sân</Button>
           </Modal.Footer>
         </Modal>
       </Container>

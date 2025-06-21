@@ -4,10 +4,10 @@ import { FilterParams } from '../types/filterParams';
 import { Court } from '../types/Court';
 import { TimeSlot } from '../types/TimeSlot';
 
-// const API_BASE = process.env.REACT_APP_API_URL;
+const API_BASE = process.env.REACT_APP_API_URL;
 // console.log("API_BASE:", API_BASE);
 // console.log("Toàn bộ env:", process.env);
-const API_BASE = 'http://localhost:5000/api';
+// const API_BASE = 'http://localhost:5000/api';
 
 // Gọi API lấy ra sân gần với địa điểm của user
 export const getCourtGroupsByLocation = async (province: string, district: string): Promise<CourtGroup[]> => {
