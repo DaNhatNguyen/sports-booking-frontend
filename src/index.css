@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Đổi màu nút đóng thành trắng khi ở trong header có nền bg-primary */
 .modal-header .btn-close {
   filter: brightness(0) invert(1);

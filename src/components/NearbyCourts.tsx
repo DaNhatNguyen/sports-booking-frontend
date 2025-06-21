@@ -79,7 +79,8 @@ const NearbyCourts: React.FC = () => {
               <Card className="h-100 border-0">
                 <Card.Img
                   variant="top"
-                  src={court.images?.[0] || '/default-image.png'}
+                  // src={court.images?.[0] || '/default-image.png'}
+                  src={'../assets/default-image.png'}
                   style={{ height: '160px', objectFit: 'cover' }}
                 />
                 <Card.Body>
