@@ -7,6 +7,7 @@ import { createBooking } from '../services/bookingService';
 import { Court } from '../types/Court';
 import { TimeSlot } from '../types/TimeSlot';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 const BookingPage: React.FC = () => {
   const { groupId } = useParams<{ groupId: string }>();
@@ -21,6 +22,11 @@ const BookingPage: React.FC = () => {
   const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+  // Ghép địa chỉ
+  const fullAddress = courtGroup
+    ? `${courtGroup.address}, ${courtGroup.district}, ${courtGroup.province}`
+    : '';
 
   useEffect(() => {
     const fetchCourtGroup = async () => {
@@ -111,7 +117,25 @@ const BookingPage: React.FC = () => {
           </>
         )}
 
+        {fullAddress && (
+          <div className="mb-4">
+            <h5 className="fw-bold">Vị trí sân</h5>
+            <div className="border rounded overflow-hidden" style={{ height: '400px' }}>
+              <iframe
+                title="Google Map"
+                width="100%"
+                height="100%"
+                frameBorder="0"
+                style={{ border: 0 }}
+                referrerPolicy="no-referrer-when-downgrade"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(fullAddress)}&output=embed`}
+                allowFullScreen
+              ></iframe>
+            </div>
+          </div>
+        )}
         {/* Chọn ngày */}
+        <h5 className="fw-bold">Đặt lịch</h5>
         <Button variant="outline-primary" className="mb-3" onClick={() => setShowDatePicker(true)}>
           <FaCalendarAlt className="me-2" />
           {new Date(selectedDate).toLocaleDateString('vi-VN')}
@@ -140,7 +164,7 @@ const BookingPage: React.FC = () => {
                 value={selectedCourtId}
                 onChange={(e) => setSelectedCourtId(e.target.value)}
               >
-                <option value="">Chọn sân nhỏ</option>
+                <option value="">Chọn sân</option>
                 {courts.map((court) => (
                   <option key={court._id} value={court._id}>
                     {court.name}
@@ -186,19 +210,19 @@ const BookingPage: React.FC = () => {
           <Modal.Body>
             {courtGroup && selectedSlot && (
               <>
-                <h5 className="fw-bold">Thông tin sân:</h5>
+                <h5 className="fw-bold text-danger">Thông tin sân:</h5>
                 <p>Tên:<strong> {courtGroup.name}</strong></p>
                 <p>Địa chỉ:<strong> {courtGroup.address}, {courtGroup.district}, {courtGroup.province}</strong></p>
                 <p>Điện thoại:<strong> {courtGroup.phoneNumber || 'Không có'}</strong></p>
 
-                <h5 className="fw-bold mt-3">Thông tin lịch đặt:</h5>
+                <h5 className="fw-bold mt-3 text-danger">Thông tin lịch đặt:</h5>
                 <p>Ngày đặt:<strong> {new Date(selectedDate).toLocaleDateString('vi-VN')}</strong></p>
                 <p><strong>{courts.find(c => c._id === selectedCourtId)?.name}: {selectedSlot.startTime} - {selectedSlot.endTime}</strong></p>
                 <p>Đối tượng:<strong> {courtGroup.type}</strong></p>
                 <p>Tổng giờ:<strong> 1h</strong></p>
                 <p>Tổng tiền:<strong> {courts.find(c => c._id === selectedCourtId)?.pricePerHour?.toLocaleString()}đ</strong></p>
 
-                <h5 className="fw-bold mt-3">Thông tin người dùng:</h5>
+                <h5 className="fw-bold mt-3 text-danger">Thông tin người dùng:</h5>
                 <p>Họ tên:<strong> {user.fullName}</strong></p>
                 <p>Số điện thoại:<strong> {user.phoneNumber}</strong></p>
               </>
@@ -210,6 +234,7 @@ const BookingPage: React.FC = () => {
           </Modal.Footer>
         </Modal>
       </Container>
+      <Footer/>
     </>
   );
 };

@@ -6,6 +6,7 @@ import { MdSportsTennis } from 'react-icons/md';
 import { getStoredUser, fetchCurrentUser, clearUser } from '../services/authService';
 import logo from '../assets/logo.png';
 import { Link } from 'react-router-dom';
+import BookingHistoryModal from './BookingHistoryModal';
 
 interface Province {
   name: string;
@@ -29,6 +30,9 @@ const Header: React.FC = () => {
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [step, setStep] = useState<number>(1);
+
+  const [showHistory, setShowHistory] = useState(false);
+  const user1 = JSON.parse(localStorage.getItem('user') || '{}');
 
   // Lấy dữ liệu khu vực trong file
   useEffect(() => {
@@ -132,7 +136,14 @@ const Header: React.FC = () => {
                   <Popover id="popover-user-menu">
                     <Popover.Body>
                       <div className="d-flex flex-column">
-                        <a href="/#" className="mb-2 text-decoration-none text-dark">
+                        <a
+                          href="#"
+                          className="mb-2 text-decoration-none text-dark"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setShowHistory(true);
+                          }}
+                        >
                           Danh sách lịch đã đặt
                         </a>
                         <hr className="my-2" />
@@ -226,6 +237,13 @@ const Header: React.FC = () => {
           </Modal.Footer>
         )}
       </Modal>
+
+      {/* lịch sử đặt sân */}
+      <BookingHistoryModal
+        show={showHistory}
+        onHide={() => setShowHistory(false)}
+        userId={user?._id}
+      />
     </Navbar>
   );
 };
