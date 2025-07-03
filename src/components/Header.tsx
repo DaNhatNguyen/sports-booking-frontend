@@ -16,7 +16,7 @@ interface Province {
 interface User {
   fullName: string;
   token: string;
-  [key: string]: any; // phòng trường hợp có thêm dữ liệu
+  [key: string]: any;
 }
 
 const Header: React.FC = () => {

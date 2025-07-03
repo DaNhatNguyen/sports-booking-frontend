@@ -8,6 +8,7 @@ import { Court } from '../types/Court';
 import { TimeSlot } from '../types/TimeSlot';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import CustomButton from '../components/CustomButton';
 
 const BookingPage: React.FC = () => {
   const { groupId } = useParams<{ groupId: string }>();
@@ -230,7 +231,7 @@ const BookingPage: React.FC = () => {
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => setShowConfirmModal(false)}>Hủy</Button>
-            <Button variant="primary" onClick={handleConfirmBooking}>Xác nhận đặt sân</Button>
+            <CustomButton variant='success' onClick={handleConfirmBooking}>Xác nhận đặt sân</CustomButton>
           </Modal.Footer>
         </Modal>
       </Container>

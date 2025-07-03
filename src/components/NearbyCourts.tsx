@@ -79,8 +79,8 @@ const NearbyCourts: React.FC = () => {
               <Card className="h-100 border-0">
                 <Card.Img
                   variant="top"
-                  // src={court.images?.[0] || '/default-image.png'}
-                  src={'../assets/default-image.png'}
+                  src={court.images?.[0] || '/default-image.png'}
+                  // src={'../assets/default-image.png'}
                   style={{ height: '160px', objectFit: 'cover' }}
                 />
                 <Card.Body>
@@ -92,10 +92,6 @@ const NearbyCourts: React.FC = () => {
                   <div className="text-muted small">
                     <FaMapMarkerAlt className="text-danger me-1" />
                     {court.address}, {court.district}, {court.province}
-                  </div>
-                  <div className="text-muted small mt-1">
-                    <FaStar className="text-warning ms-2 me-1" />
-                    {court.rating.toFixed(1)}
                   </div>
                 </Card.Body>
               </Card>
@@ -119,7 +115,7 @@ const NearbyCourts: React.FC = () => {
             <Tab eventKey="info" title="Thông tin">
               <div className="tab-scroll">
                 <img
-                  src={selectedCourt?.images?.[0] || '/default-image.jpg'}
+                  src={selectedCourt?.images?.[0] || '/default-image.png'}
                   alt="court"
                   className="img-fluid rounded mb-3"
                 />
@@ -127,11 +123,11 @@ const NearbyCourts: React.FC = () => {
                 <p><strong>Địa chỉ:</strong> {selectedCourt?.address}, {selectedCourt?.district}, {selectedCourt?.province}</p>
                 <p><strong>Thời gian mở cửa:</strong> {selectedCourt?.openTime} - {selectedCourt?.closeTime}</p>
                 <p><strong>Điện thoại:</strong> {selectedCourt?.phoneNumber || 'Chưa có'}</p>
-                <p><strong>Đánh giá:</strong> ⭐ {selectedCourt?.rating}</p>
+                <p><strong>Đánh giá:</strong> <FaStar color='#ffc960' /> {selectedCourt?.rating}</p>
               </div>
             </Tab>
             <Tab eventKey="services" title="Dịch vụ">
-              <p>Thông tin dịch vụ đi kèm của sân...</p>
+              <p>Dịch Vụ</p>
             </Tab>
             <Tab eventKey="images" title="Hình ảnh">
               <div className="d-flex flex-wrap gap-2 mt-2">
@@ -146,7 +142,7 @@ const NearbyCourts: React.FC = () => {
               </div>
             </Tab>
             <Tab eventKey="reviews" title="Đánh giá">
-              <p>Hiển thị đánh giá từ người dùng...</p>
+              <p>Đánh giá</p>
             </Tab>
           </Tabs>
 

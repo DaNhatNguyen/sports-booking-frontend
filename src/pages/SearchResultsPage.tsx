@@ -95,10 +95,6 @@ const SearchResults: React.FC = () => {
                           <FaMapMarkerAlt className="text-danger me-1" />
                           {court.address}, {court.district}, {court.province}
                         </div>
-                        <div className="text-muted small mt-1">
-                          <FaStar className="text-warning ms-2 me-1" />
-                          {court.rating.toFixed(1)}
-                        </div>
                       </Card.Body>
                     </Card>
                   </div>
@@ -129,7 +125,7 @@ const SearchResults: React.FC = () => {
                     <p><strong>Địa chỉ:</strong> {selectedCourt?.address}, {selectedCourt?.district}, {selectedCourt?.province}</p>
                     <p><strong>Thời gian mở cửa:</strong> {selectedCourt?.openTime} - {selectedCourt?.closeTime}</p>
                     <p><strong>Điện thoại:</strong> {selectedCourt?.phoneNumber || 'Chưa có'}</p>
-                    <p><strong>Đánh giá:</strong> ⭐ {selectedCourt?.rating}</p>
+                    <p><strong>Đánh giá:</strong> <FaStar color='#ffc960' /> {selectedCourt?.rating}</p>
                   </div>
                 </Tab>
                 <Tab eventKey="services" title="Dịch vụ">

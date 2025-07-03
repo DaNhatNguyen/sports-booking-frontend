@@ -91,10 +91,6 @@ const CourtByTypePage: React.FC = () => {
                       <FaMapMarkerAlt className="text-danger me-1" />
                       {group.district}, {group.province}
                     </div>
-                    <div className="text-muted small mt-1">
-                      <FaStar className="text-warning me-1" />
-                      {group.rating.toFixed(1)}
-                    </div>
                   </Card.Body>
                 </Card>
               </div>
@@ -125,7 +121,7 @@ const CourtByTypePage: React.FC = () => {
                 <p><strong>Loại sân:</strong> {selectedCourtGroup?.type}</p>
                 <p><strong>Địa chỉ:</strong> {selectedCourtGroup?.address}</p>
                 <p><strong>Thời gian mở cửa:</strong> {selectedCourtGroup?.openTime} - {selectedCourtGroup?.closeTime}</p>
-                <p><strong>Đánh giá:</strong> ⭐ {selectedCourtGroup?.rating}</p>
+                <p><strong>Đánh giá:</strong> <FaStar color='#ffc960' /> {selectedCourtGroup?.rating}</p>
               </div>
             </Tab>
             <Tab eventKey="services" title="Dịch vụ">
