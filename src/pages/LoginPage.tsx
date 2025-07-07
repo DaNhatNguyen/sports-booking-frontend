@@ -1,4 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { loginRequest } from '../redux/slices/authSlice';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Container, Form, Button, InputGroup } from 'react-bootstrap';
@@ -6,17 +9,25 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import loginBg from '../assets/login-bg.png';
 
 const LoginPage: React.FC = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
+
+  const { user, loading, error } = useSelector((state: RootState) => state.auth);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user]);
+
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!email) {
@@ -33,30 +44,14 @@ const LoginPage: React.FC = () => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^(0|\+84)[0-9]{9,10}$/;
-    const isEmailValid = emailRegex.test(email);
-    const isPhoneValid = phoneRegex.test(email);
 
-    if (!isEmailValid && !isPhoneValid) {
+    if (!emailRegex.test(email) && !phoneRegex.test(email)) {
       alert('Email hoặc số điện thoại không hợp lệ.');
       emailRef.current?.focus();
       return;
     }
 
-    try {
-      setLoading(true);
-      const res = await axios.post('http://localhost:5000/api/auth/login', {
-        email,
-        password,
-      });
-
-      const { token, user } = res.data;
-      localStorage.setItem('user', JSON.stringify({ ...user, token }));
-      navigate('/');
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Đăng nhập thất bại');
-    } finally {
-      setLoading(false);
-    }
+    dispatch(loginRequest({ email, password }));
   };
 
   return (
@@ -142,11 +137,12 @@ const LoginPage: React.FC = () => {
               'ĐĂNG NHẬP'
             )}
           </Button>
-
+          
           <div className="text-center small">
             <a href="#">Quên mật khẩu?</a><br />
             Bạn chưa có tài khoản? <a href="/signup" className="fw-bold">Đăng ký ngay.</a>
           </div>
+          {error && <p className="text-danger text-center">{error}</p>}
         </Form>
       </div>
     </div>

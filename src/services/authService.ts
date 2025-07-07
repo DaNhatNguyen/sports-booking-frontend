@@ -36,4 +36,9 @@ export const fetchCurrentUser = async (token: string): Promise<User> => {
     },
   });
   return res.data.user;
+};  
+
+// Gọi API đăng nhập
+export const loginApi = (data: { email: string; password: string }) => {
+  return axios.post('http://localhost:5000/api/auth/login', data);
 };

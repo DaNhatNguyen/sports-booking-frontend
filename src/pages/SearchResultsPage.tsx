@@ -24,8 +24,6 @@ const SearchResults: React.FC = () => {
   const city = query.get('city') || '';
   const district = query.get('district') || '';
 
-  console.log(type, city, district);
-
   const navigate = useNavigate();
 
   useEffect(() => {
